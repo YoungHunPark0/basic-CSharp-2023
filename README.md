@@ -1,6 +1,7 @@
 # basic-CSharp-2023
 부경대 2023  객체지향(C#) 프로그래밍 리포지토리
-/* 깃허브 리포지토리 - public, readme.md 체크, gitignore- visual stdio 체크
+/*
+깃허브 리포지토리 - public, readme.md 체크, gitignore- visual stdio 체크
 
 visual studio install ->  수정-> 워크로드 asp.net, .net데스크톱개발 체크
 -> 개별 구성요소 net3.1 체크 추가
