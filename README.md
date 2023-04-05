@@ -1,8 +1,8 @@
 # basic-CSharp-2023
 부경대 2023  객체지향(C#) 프로그래밍 리포지토리
- <!--
- 깃허브 리포지토리 - public, readme.md 체크, gitignore- visual stdio 체크
 
+ 깃허브 리포지토리 - public, readme.md 체크, gitignore- visual stdio 체크
+=======
 visual studio install ->  수정-> 워크로드 asp.net, .net데스크톱개발 체크
 -> 개별 구성요소 net3.1 체크 추가
 
@@ -21,7 +21,7 @@ visual stdio 새프로젝트 - c#, windows, 콘솔 체크-> 2개나옴
 콘솔앱 .net framework 이전버전, 그냥 콘솔앱 최신
 
 도구-설정가져오기 및 내보내기-파일경로 변경-저장
--->
+
 ## 1일차
 - C# 기본
 	- .NET framework / .NET 5.0 이후
