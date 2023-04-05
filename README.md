@@ -1,7 +1,9 @@
 # basic-CSharp-2023
 부경대 2023  객체지향(C#) 프로그래밍 리포지토리
 
- <!-- 깃허브 리포지토리 - public, readme.md 체크, gitignore- visual stdio 체크
+ <!-- 
+ https://drive.google.com/drive/folders/1TDrL5UO_dbADhBb_T7Ah6URNluIUwY4P
+ 깃허브 리포지토리 - public, readme.md 체크, gitignore- visual stdio 체크
 =======
 visual studio install ->  수정-> 워크로드 asp.net, .net데스크톱개발 체크
 -> 개별 구성요소 net3.1 체크 추가
@@ -27,3 +29,11 @@ visual stdio 새프로젝트 - c#, windows, 콘솔 체크-> 2개나옴
 	- .NET framework / .NET 5.0 이후
 	- Visual studio상 C# 구성
 	- 기본 문법
+	
+## 2일차
+- C# 기본
+	- 기본 문법
+	
+- Win App
+	- Winforms vs WPF 개요
+	- Winforms 기초
