@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace cs19_Interface
 {
-    interface ILogger
+    interface ILogger // 인터페이스는 약속. 어떤 메서드를 사용하겠다는 선언만 하고, 구현은 안함. 구현은 클래스에서
     {
+        // int page = 0; -> 변수는 인터페이스에 속하지 못함! ={get, set}은 가능
         void WriteLog(string log);
     }
 
-    interface IFormattableLogger : ILogger //  IFormattableLogger는 Ilogger도 구현하고  IFormattableLogger도 구현
+    interface IFormattableLogger : ILogger // : ILogger -> 상속이 아니라 구현! 
+        //  IFormattableLogger는 Ilogger도 구현하고  IFormattableLogger도 구현
     {
         void WriteLog(string format, params object[] args); // args 다중 파라미터
     }
