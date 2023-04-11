@@ -22,7 +22,31 @@ https://learn.microsoft.com/ko-kr/sql/ssms/download-sql-server-management-studio
 visual stdio 새프로젝트 - c#, windows, 콘솔 체크-> 2개나옴
 콘솔앱 .net framework 이전버전, 그냥 콘솔앱 최신
 
-도구-설정가져오기 및 내보내기-파일경로 변경-저장 -->
+도구-설정가져오기 및 내보내기-파일경로 변경-저장
+
+c#으로 데이터베이스 연동하기
+SSMS sql서버 - 예시파일 https://github.com/microsoft/sql-server-samples
+다운받고 압출풀기 
+환경 - 글꼴 및 색 - 글꼴변경
+모든언어 - 줄번호 체크
+sqlserver 개체 탐색기 테이블 및 뷰 옵션 - 상위 <n>개 둘다 0
+압축푼 파일 중 instnwnd.sql, instpubs.sql파일 마우스 드래그해서
+ssms에 끌어서 넣기 
+- 실행 하면 왼쪽 테이블에 새로고침하면 추가됨
+
+https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=lwj798&logNo=220787369857
+c#으로 데이터베이스 연동하기
+visualstdio - 보기 - 서버탐색기 - 연결추가 - ms sql server체크 (항상밑에 체크)
+서버이름 localhost, 인증-sql server인증- id sa // pw 12345
+데이터베이스 이름선택 - Northwind 선택 (연결테스트 통과하기)
+고급 - 맨밑에 Data Source=localhost;Initial Catalog=Northwind;User ID=sa 복사
+확인 - 확인 - 연동해놓은 FrmMain cs파일에 코드보기(f7)
+connection string = 데이터 문자열
+string connstring = "Data Source=localhost;Initial Catalog = Northwind; User ID = sa;Password=12345;";
+복사한거 붙여넣기하기! 패스워드는 나중에 따로 입력
+도구상자 데이터 - 데이터그리드뷰 넣고 - 오른쪽상단 삼각형 - 프로젝트데이터추가
+데이터 더블클릭 - 예 - 보이기 다음다음 - 테이블 employ만 체크 - 실행하면 자동으로 뜸
+ -->
 
 ## 1일차
 - C# 기본
@@ -66,6 +90,7 @@ src="https://raw.githubusercontent.com/YoungHunPark0/basic-CSharp-2023/main/imag
 - C# 기본
 	- 인터페이스, 추상클래스
 	- 프로퍼티
+	- 배열, 컬렉션
 	
 - Win App
 	- WinForms 디자인 오류시 해결방법
@@ -75,3 +100,28 @@ src="https://raw.githubusercontent.com/YoungHunPark0/basic-CSharp-2023/main/imag
 
 <img
 src="https://raw.githubusercontent.com/YoungHunPark0/basic-CSharp-2023/main/images/winform2.png" width="700">
+
+## 6일차
+- C# 기본
+	- 컬렉션
+	- 일반화 프로그래밍
+	- 예외처리
+	- 대리자, 이벤트
+	
+- Win App
+	- 탐색기 마무리
+		- 추가개발 리스트
+		- 컨텍스트 메뉴(마우스 오른쪽 메뉴)
+		- 보호된 운영체제 폴더 숨기기
+		- 리스트뷰 폴더 더블클릭시 하위폴더 표시
+	- DB핸들링
+
+6일차 윈도우 탐색기 만들기 완료
+
+<img
+src="https://raw.githubusercontent.com/YoungHunPark0/basic-CSharp-2023/main/images/winform3.png" width="700">
+
+## 7일차
+- Win App
+	- BookRentalShop DB 사용 WinForms 앱개발
+	- 실습 예제
