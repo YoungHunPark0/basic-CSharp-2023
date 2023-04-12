@@ -44,6 +44,8 @@ visualstdio - 보기 - 서버탐색기 - 연결추가 - ms sql server체크 (항
 connection string = 데이터 문자열
 string connstring = "Data Source=localhost;Initial Catalog = Northwind; User ID = sa;Password=12345;";
 복사한거 붙여넣기하기! 패스워드는 나중에 따로 입력
+DB핸들링
+https://docs.google.com/document/d/1jUSYBeAwMinuZqWqamPEyr_tj1fGjugkKU3G1FGnte0/edit#heading=h.8a9sxshwch3f
 도구상자 데이터 - 데이터그리드뷰 넣고 - 오른쪽상단 삼각형 - 프로젝트데이터추가
 데이터 더블클릭 - 예 - 보이기 다음다음 - 테이블 employ만 체크 - 실행하면 자동으로 뜸
  -->
@@ -122,6 +124,22 @@ src="https://raw.githubusercontent.com/YoungHunPark0/basic-CSharp-2023/main/imag
 src="https://raw.githubusercontent.com/YoungHunPark0/basic-CSharp-2023/main/images/winform3.png" width="700">
 
 ## 7일차
+- C# 기본
+	- 대리자(콜백 - 이벤트등 대신해주는 것), 이벤트
+	- 람다식
+	- 애트리뷰트
+	- 파일핸들링
+	- 더 공부해야할 내용(LINQ, 리플렉션, dynamic)
+	
+- Win App
+	- DB핸들링
+	- SDI vs MDI
+	
+## 8일차
+- C# 기본
+
 - Win App
 	- BookRentalShop DB 사용 WinForms 앱개발
-	- 실습 예제
+	- 실습예제
+	
+	
