@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Windows.Forms;
@@ -27,6 +28,11 @@ namespace wf13_bookrentalshop
         {
             isNew = true; // 신규부터 시작
             RefreshData();
+            LoadCboData(); // 콤보박스에 들어갈 데이터 로드
+
+            // 출판일자 데이터형식 변경
+            DtpReleaseData.Format = DateTimePickerFormat.Custom;
+            DtpReleaseData.CustomFormat = "yyyy-MM-dd"; // 요일 안나옴
         }
 
         private void BtnNew_Click(object sender, EventArgs e)
@@ -56,16 +62,16 @@ namespace wf13_bookrentalshop
             {
                 if (conn.State == ConnectionState.Closed) conn.Open();
 
-                string strCheckQuery = "SELECT COUNT(*) FROM bookstbl WHERE Division = @Division";
+                string strCheckQuery = "SELECT COUNT(*) FROM rentaltbl WHERE bookIdx = @bookIdx";
                 MySqlCommand chkCmd = new MySqlCommand(strCheckQuery, conn);
-                MySqlParameter prmDivision = new MySqlParameter("@Division", TxtBookIdx.Text); // 파라미터랑 커맨드랑 연결
-                chkCmd.Parameters.Add(prmDivision);
+                MySqlParameter prmBookIdx = new MySqlParameter("@bookIdx", TxtBookIdx.Text); // 파라미터랑 커맨드랑 연결
+                chkCmd.Parameters.Add(prmBookIdx);
 
                 var result = chkCmd.ExecuteScalar(); // 쿼리실행하면 오브젝트를 리턴받음
                 
                 if (result.ToString() != "0")
                 {
-                    MessageBox.Show("이미 사용중인 코드입니다.", "삭제", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("이미 대여중인 책입니다.", "삭제", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
             }
@@ -93,10 +99,20 @@ namespace wf13_bookrentalshop
                 TxtBookIdx.Text = selData.Cells[0].Value.ToString(); // Text 데이터속성은 string selData.Cells[0].Value;는 오브젝트.
                                                                       // 오브젝트의 조상인 .ToString 해줘야함
                 TxtAuthor.Text = selData.Cells[1].Value.ToString();
-                TxtBookIdx.ReadOnly = true; // PK(장르코드)는 수정하면 안됨
+                CboDivision.SelectedValue = selData.Cells[2].Value; // B001 == B001
+                                                                    // selData.Cells[3] 사용안함
+                TxtNames.Text = selData.Cells[4].Value.ToString();
+                DtpReleaseData.Value = (DateTime)selData.Cells[5].Value;
+                TxtISBN.Text = selData.Cells[6].Value.ToString();
+                NudPrice.Text = selData.Cells[7].Value.ToString(); // decimal 써야하지만 작은값이기에 int
 
                 isNew = false; // 수정
             }
+        }
+
+        private void DgvResult_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            DgvResult.ClearSelection(); // 최초에 첫번째열 첫번째셀 선택되어있는것을 해제
         }
 
         #endregion
@@ -133,6 +149,7 @@ namespace wf13_bookrentalshop
                     // DgvResult.DataSource = ds;
                     // DgvResult.DataMember = "divtbl"; 위랑 같음
 
+                    // 데이터그리드뷰 컬럼 헤더 제목
                     DgvResult.Columns[0].HeaderText = "번호";
                     DgvResult.Columns[1].HeaderText = "저자명";
                     DgvResult.Columns[2].HeaderText = "책장르";
@@ -142,23 +159,62 @@ namespace wf13_bookrentalshop
                     DgvResult.Columns[6].HeaderText = "ISBN";
                     DgvResult.Columns[7].HeaderText = "책가격";
 
+                    // 컬럼 넓이 또는 보이기
                     DgvResult.Columns[0].Width = 55;
                     DgvResult.Columns[2].Visible = false; // B001같은 코드영역은 보일필요 없음
                     DgvResult.Columns[5].Width = 78;
                     DgvResult.Columns[7].Width = 80;
+
+                    // 컬럼 정렬
+                    DgvResult.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight; // 번호
+                    DgvResult.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter; // 출판일자
+                    DgvResult.Columns[7].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight; // 책가격                   
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"비정상적 오류 {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"RefreshData() 비정상적 오류 {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadCboData()
+        {
+            try
+            {
+                using (MySqlConnection conn = new MySqlConnection(Commons.ConnString))
+                {
+                    if (conn.State == ConnectionState.Closed) { conn.Open(); }
+                    var qurey = "SELECT Division, Names FROM divtbl";
+                    MySqlCommand cmd = new MySqlCommand(qurey, conn);
+                    MySqlDataReader reader = cmd.ExecuteReader();
+                    var temp = new Dictionary<string, string>();
+                    while (reader.Read()) //read에 값이 있을때 동안
+                    {
+                        temp.Add(reader[0].ToString(), reader[1].ToString()); // (key)B001, (value)공포/스릴러
+                    }
+
+                    // 콤보박스에 할당
+                    CboDivision.DataSource = new BindingSource(temp, null); // source를 집어넣을 수 있는 객체를 만듬. 
+                    CboDivision.DisplayMember = "Value";
+                    CboDivision.ValueMember = "Key";
+                    CboDivision.SelectedIndex = -1;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"LoadData() 비정상적 오류 {ex.Message}", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void ClearInputs()
         {
             TxtBookIdx.Text = TxtAuthor.Text = string.Empty;
-            TxtBookIdx.ReadOnly = false; // 신규일땐 입력 가능
-            TxtBookIdx.Focus();
+            TxtNames.Text = TxtISBN.Text = string.Empty;
+            CboDivision.SelectedIndex = -1;
+            DtpReleaseData.Value = DateTime.Now; // 오늘날짜로 초기화
+            NudPrice.Value = 0;
+            //TxtBookIdx.ReadOnly = false; // 신규일땐 입력 가능
+            TxtAuthor.Focus(); // 번호는 입력안함
             isNew = true; // 신규
         }
 
@@ -167,21 +223,40 @@ namespace wf13_bookrentalshop
         {
             var result = true;
             var errorMsg = string.Empty; // errormessage
-            if (string.IsNullOrEmpty(TxtBookIdx.Text))
-            {
-                // 입력 검증 (Validation check)
-                result = false;
-                errorMsg = "● 장르명을 입력하세요.\r\n";
-                //MessageBox.Show("장르코드를 입력하세요", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //return false; // 메서드 탈출
-            }
 
             if (string.IsNullOrEmpty(TxtAuthor.Text))
             {
                 // 입력 검증 (Validation check)
                 result = false;
-                errorMsg += "● 장르명을 입력하세요.\r\n";
+                errorMsg += "● 저자명을 입력하세요.\r\n";
                 //MessageBox.Show("장르명을 입력하세요", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //return false; // 메서드 탈출
+            }
+
+            if (CboDivision.SelectedIndex < 0)
+            {
+                // 입력 검증 (Validation check)
+                result = false;
+                errorMsg += "● 장르를 입력하세요.\r\n";
+                //MessageBox.Show("장르명을 입력하세요", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //return false; // 메서드 탈출
+            }
+
+            if (string.IsNullOrEmpty(TxtNames.Text))
+            {
+                // 입력 검증 (Validation check)
+                result = false;
+                errorMsg += "● 책제목을 입력하세요.\r\n";
+                //MessageBox.Show("장르명을 입력하세요", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //return false; // 메서드 탈출
+            }
+
+            if (DtpReleaseData.Value == null)
+            {
+                // 입력 검증 (Validation check)
+                result = false;
+                errorMsg = "● 출판일자를 선택하세요.\r\n";
+                //MessageBox.Show("장르코드를 입력하세요", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 //return false; // 메서드 탈출
             }
 
@@ -194,7 +269,6 @@ namespace wf13_bookrentalshop
             {
                 return result;
             }
-
         }
 
         // isNew = true INSERT / false UPDATE
@@ -211,21 +285,53 @@ namespace wf13_bookrentalshop
 
                     if (isNew) // isNew가 true면
                     {
-                        query = @"INSERT INTO divtbl
-	                                   VALUES (@Division, @Names)";
+                        query = @"INSERT INTO bookstbl
+                                             (Author,
+                                              Division,
+                                              Names,
+                                              ReleaseDate,
+                                              ISBN,
+                                              Price)
+                                       VALUES
+                                             (@Author,
+                                              @Division,
+                                              @Names,
+                                              @ReleaseDate,
+                                              @ISBN,
+                                              @Price);";
                     }
                     else
                     {
-                        query = @"UPDATE divtbl
-                                     SET Names = @Names 
-                                   WHERE Division = @Division";
+                        query = @"UPDATE bookstbl
+                                     SET Author = @Author,
+	                                     Division = @Division,
+	                                     Names = @Names,
+	                                     ReleaseDate = @ReleaseDate,
+	                                     ISBN = @ISBN,
+	                                     Price = @Price 
+                                   WHERE bookIdx = @bookIdx;"; // ★마지막 @Price 있는부분 , 안지우면 에러남!★
                     }
 
                     MySqlCommand cmd = new MySqlCommand(query, conn);
-                    MySqlParameter prmDivision = new MySqlParameter("@Division", TxtBookIdx.Text);
-                    MySqlParameter prmNames = new MySqlParameter("@Names", TxtAuthor.Text);
+                    MySqlParameter prmAuthor = new MySqlParameter("@Author", TxtAuthor.Text);
+                    MySqlParameter prmDivision = new MySqlParameter("@Division", CboDivision.SelectedValue.ToString());
+                    MySqlParameter prmNames = new MySqlParameter("@Names", TxtNames.Text);
+                    MySqlParameter prmReleaseDate = new MySqlParameter("@ReleaseDate", DtpReleaseData.Value);
+                    MySqlParameter prmISBN = new MySqlParameter("@ISBN", TxtISBN.Text);
+                    MySqlParameter prmPrice = new MySqlParameter("@Price", NudPrice.Value);
+
+                    cmd.Parameters.Add(prmAuthor);
                     cmd.Parameters.Add(prmDivision);
                     cmd.Parameters.Add(prmNames);
+                    cmd.Parameters.Add(prmReleaseDate);
+                    cmd.Parameters.Add(prmISBN);
+                    cmd.Parameters.Add(prmPrice);
+
+                    if (isNew == false) // update할 때는 bookIdx 파라미터를 추가!!
+                    {
+                        MySqlParameter prmBookIdx = new MySqlParameter("@bookIdx", TxtBookIdx.Text);
+                        cmd.Parameters.Add(prmBookIdx);
+                    }
 
                     var result = cmd.ExecuteNonQuery(); // INSERT, UPDATE, DELETE 일때 사용. 반환값을 result에 저장
 
@@ -256,12 +362,12 @@ namespace wf13_bookrentalshop
                 {
                     if (conn.State == ConnectionState.Closed) conn.Open();
 
-                    var query = @"DELETE FROM divtbl
-	                              WHERE Division = @Division";
+                    var query = @"DELETE FROM bookstbl
+	                                    WHERE bookIdx = @bookIdx";
 
                     MySqlCommand cmd = new MySqlCommand(query, conn);
-                    MySqlParameter prmDivision = new MySqlParameter("@Division", TxtBookIdx.Text);
-                    cmd.Parameters.Add(prmDivision);
+                    MySqlParameter prmBookIdx = new MySqlParameter("@bookIdx", TxtBookIdx.Text);
+                    cmd.Parameters.Add(prmBookIdx);
 
 
                     var result = cmd.ExecuteNonQuery(); // INSERT, UPDATE, DELETE 일때 사용. 반환값을 result에 저장
@@ -286,6 +392,5 @@ namespace wf13_bookrentalshop
         }
 
         #endregion
-
     }
 }

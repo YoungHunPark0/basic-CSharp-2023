@@ -151,7 +151,7 @@ namespace wf13_bookrentalshop
             {
                 // 입력 검증 (Validation check)
                 result = false;
-                errorMsg = "● 장르명을 입력하세요.\r\n";
+                errorMsg = "● 장르코드를 입력하세요.\r\n";
                 //MessageBox.Show("장르코드를 입력하세요", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 //return false; // 메서드 탈출
             }
